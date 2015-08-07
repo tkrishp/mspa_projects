@@ -75,9 +75,8 @@ test = merge %>% filter(data == 'test')
 
 # neural network
 library(neuralnet)
-formula = purchased_A ~ shopping_pt + day + state + group_size + homeowner + car_age + 
-          car_value + age_oldest + age_youngest + married_couple + A + B + C + D + E + F + G + cost + 
-          FixedRiskFactor + FixedCPrevious + FixedDurationPrevious
+select = neuralnet :: select
+compute = neuralnet :: compute
 
 # neural network doesnt create dummy variables for qualitative vars
 # use model.matrix to do that
@@ -105,12 +104,13 @@ formula = {purchased_A1 + purchased_A2 ~ shopping_pt2 + shopping_pt3 + shopping_
              F1 + F2 + F3 + 
              G2 + G3 + G4 + 
              cost + 
-             FixedRiskFactor1 + FixedRiskFactor2 + FixedRiskFactor3 + FixedRiskFactor4 + FixedCPrevious1 + FixedCPrevious2 + FixedCPrevious3 + FixedCPrevious4 + 
+             FixedRiskFactor1 + FixedRiskFactor2 + FixedRiskFactor3 + FixedRiskFactor4 + 
+             FixedCPrevious1 + FixedCPrevious2 + FixedCPrevious3 + FixedCPrevious4 + 
              FixedDurationPrevious}
 
 
 nn.fit.A = neuralnet(formula = formula, 
                    data = train.matrix,
-                   hidden = c(5,5))
+                   hidden = c(3))
 
 
