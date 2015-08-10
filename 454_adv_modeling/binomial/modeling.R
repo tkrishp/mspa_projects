@@ -1,5 +1,3 @@
-setwd("~/Google Drive/MSPA/454 (Advanced Modeling Techniques)/assignments/assignment3")
-
 # import libraries
 library(tidyr)
 library(dplyr)

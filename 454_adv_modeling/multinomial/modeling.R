@@ -1,5 +1,3 @@
-setwd("~/github/mspa_projects/454_adv_modeling/ind_asg4")
-
 library(psych)
 library(tidyr)
 library(dplyr)
