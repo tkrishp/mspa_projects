@@ -128,59 +128,28 @@ train.matrix = model.matrix(~ shopping_pt + day + state + group_size + homeowner
                               car_age + car_value + age_oldest + age_youngest + married_couple + 
                               FixedCPrevious + FixedRiskFactor + FixedDurationPrevious + 
                               A + B + C + D + E + F + G + cost + 
-                              purchased_A + purchased_B + purchased_C + purchased_D + purchased_E + purchased_F + purchased_G,
+                              purchased_A,
                             data = train)
+cn = colnames(train.matrix)
+cl = length(cn)
+rhs = paste(cn[2:(length(cn)-2)], collapse = ' + ')
+lhs = "purchased_A1 + purchased_A2"
+form = paste(lhs, rhs, sep = ' ~ ')
 
 test.matrix = model.matrix(~ shopping_pt + day + state + group_size + homeowner + 
                              car_age + car_value + age_oldest + age_youngest + married_couple + 
                              FixedCPrevious + FixedRiskFactor + FixedDurationPrevious + 
                              A + B + C + D + E + F + G + cost + 
-                             purchased_A + purchased_B + purchased_C + purchased_D + purchased_E + purchased_F + purchased_G,
+                             purchased_A,
                            data = test)
 
-traindata = subset(train.matrix, select = -c(purchased_A2,
-                                            purchased_B1,
-                                            purchased_C2,purchased_C3,purchased_C4,
-                                            purchased_D2,purchased_D3,
-                                            purchased_E1,
-                                            purchased_F1,purchased_F2,purchased_F3,
-                                            purchased_G2,purchased_G3,purchased_G4))
-testdata = subset(test.matrix, select = -c(purchased_A1,purchased_A2,
-                                           purchased_B1,
-                                           purchased_C2,purchased_C3,purchased_C4,
-                                           purchased_D2,purchased_D3,
-                                           purchased_E1,
-                                           purchased_F1,purchased_F2,purchased_F3,
-                                           purchased_G2,purchased_G3,purchased_G4))
-
-formula = {
-            purchased_A1 ~ shopping_pt2 + shopping_pt3 + shopping_pt4 + shopping_pt5 + shopping_pt6 + shopping_pt7 + shopping_pt8 + shopping_pt9 + shopping_pt10 + shopping_pt11 + shopping_pt12 + 
-            day1 + day2 + day3 + day4 + day5 + day6 + 
-            stateAR + stateCO + stateCT + stateDC + stateDE + stateFL + stateGA + stateIA + stateID + stateIN + stateKS + stateKY + stateMD + stateME + stateMO + stateMS + stateMT + stateND + stateNE + stateNH + stateNM + stateNV + stateNY + stateOH + stateOK + stateOR + statePA + stateRI + stateSD + stateTN + stateUT + stateWA + stateWI + stateWV + stateWY + 
-            group_size2 + group_size3 + group_size4 + 
-            homeowner1 + 
-            car_age + 
-            car_valuea + car_valueb + car_valuec + car_valued + car_valuee + car_valuef + car_valueg + car_valueh + car_valuei + 
-            age_oldest + 
-            age_youngest + 
-            married_couple1 + 
-            FixedCPrevious1 + FixedCPrevious2 + FixedCPrevious3 + FixedCPrevious4 + 
-            FixedRiskFactor1 + FixedRiskFactor2 + FixedRiskFactor3 + FixedRiskFactor4 + 
-            FixedDurationPrevious +
-            A1 + A2 + 
-            B1 + 
-            C2 + C3 + C4 + 
-            D2 + D3 + 
-            E1 + 
-            F1 + F2 + F3 + 
-            G2 + G3 + G4 + 
-            cost
-          }
-
 # fit a neural network
-nn.fit.A = neuralnet(formula = formula, 
-                   data = traindata,
-                   hidden = c(3))
+nn.fit.A = neuralnet(formula = form, 
+                     data = train.matrix,
+                     hidden = c(3),
+                     rep = 3,
+                     act.fct = 'logistic',
+                     linear.output = TRUE)
 
 # predictions for A
 nn.predict.A = compute(nn.fit.A, testdata)
